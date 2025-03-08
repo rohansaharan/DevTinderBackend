@@ -108,18 +108,36 @@ const app = express();
 
 //Api for posting data into the db-
 
+// app.post("/signup", async (req, res) => {
+//   const user = new User({
+//     firstName: "Harry",
+//     lastName: "Potter",
+//     email: "harry@gmail.com",
+//     passwrod: "aedef",
+//   });
+//   try {
+//     await user.save();
+//     res.send("Data saved in the DB successfully");
+//   } catch (err) {
+//     res.status(400).send("Error ocuured in saving data to DB" + err.message);
+//   }
+// });
+
+// sending dynamic data to db coming from postman(or client or browser)
+//first we need to convert the JSON data which is sent from the Postman to js object, and for that there is a
+// built in function in express called express.json(), so we need to create a middlewarer for it.
+
+app.use(express.json()); // this is a middleware which converts the JSON to js object
+
 app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "Harry",
-    lastName: "Potter",
-    email: "harry@gmail.com",
-    passwrod: "aedef",
-  });
+  console.log(req.body);
+
+  const user = new User(req.body);
   try {
     await user.save();
-    res.send("Data saved in the DB successfully");
+    res.send("Data stored Successfully in the DB!!");
   } catch (err) {
-    res.status(400).send("Error ocuured in saving data to DB" + err.message);
+    res.status(400).send("Error in saving data" + err.message);
   }
 });
 
