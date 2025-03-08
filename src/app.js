@@ -141,6 +141,50 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// getting the data from the DB
+
+// getting user with a particular email
+app.get("/user", async (req, res) => {
+  const email = req.body.email;
+  console.log(email);
+  try {
+    const user = await User.find({ email: email });
+    // const user = await User.find({ email: email }, "firstName lastName"); // This will give fisrt and last name form matching data
+    // console.log(typeof user);
+    if (user.length === 0) {
+      res.status(404).send("Data not found!!");
+    } else {
+      res.send(user);
+    }
+  } catch (err) {
+    res.status(500).send("Something Went Wrong" + err.message);
+  }
+});
+
+//getting all the data from a particular collection
+
+app.get("/feed", async (req, res) => {
+  const users = await User.find();
+  res.send(users);
+});
+
+// getting data by id
+
+app.get("/id", async (req, res) => {
+  const id = req.body._id;
+  try {
+    const user = await User.findById(id);
+    console.log(user);
+    if (!user) {
+      res.status(404).send("No Data Found");
+    } else {
+      res.send(user);
+    }
+  } catch (err) {
+    res.status(500).send("Something went wrong!!" + err.message);
+  }
+});
+
 connectDB()
   .then(() => {
     console.log("DB connectd Successfully");
