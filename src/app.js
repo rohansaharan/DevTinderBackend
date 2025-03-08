@@ -145,10 +145,10 @@ app.post("/signup", async (req, res) => {
 
 // getting user with a particular email
 app.get("/user", async (req, res) => {
-  const email = req.body.email;
-  console.log(email);
+  const emailId = req.body.emailId;
+  // console.log(email);
   try {
-    const user = await User.find({ email: email });
+    const user = await User.find({ email: emailId });
     // const user = await User.find({ email: email }, "firstName lastName"); // This will give fisrt and last name form matching data
     // console.log(typeof user);
     if (user.length === 0) {
@@ -169,7 +169,6 @@ app.get("/feed", async (req, res) => {
 });
 
 // getting data by id
-
 app.get("/id", async (req, res) => {
   const id = req.body._id;
   try {
@@ -180,6 +179,34 @@ app.get("/id", async (req, res) => {
     } else {
       res.send(user);
     }
+  } catch (err) {
+    res.status(500).send("Something went wrong!!" + err.message);
+  }
+});
+
+//deleting a data from db using id
+app.delete("/user", async (req, res) => {
+  const id = req.body.userId;
+  try {
+    const user = await User.findByIdAndDelete(id);
+    console.log(user);
+    if (!user) {
+      res.status(404).send("No Data Found");
+    } else {
+      res.send("User Deleted Successfully!!");
+    }
+  } catch (err) {
+    res.status(500).send("Something went wrong!!" + err.message);
+  }
+});
+
+// updating a data in DB with email id
+app.patch("/user", async (req, res) => {
+  const email = req.body.emailId;
+  const data = req.body;
+  try {
+    const user = await User.findOneAndUpdate({ email: email }, data);
+    res.send("User Updated Successfully");
   } catch (err) {
     res.status(500).send("Something went wrong!!" + err.message);
   }
