@@ -7,6 +7,8 @@ const { connectDB } = require("./config/database.js");
 const { adminAuth } = require("./middleware/auth.js");
 
 const { User } = require("./model/user.js");
+const { Team } = require("./model/teams.js");
+const mongoose = require("mongoose");
 const app = express();
 
 // app.use("/admin", (req, res, next) => {
@@ -212,11 +214,47 @@ app.patch("/user", async (req, res) => {
   }
 });
 
+// Putting Data inside Team Collection
+app.post("/team", async (req, res) => {
+  const team = new Team(req.body);
+  console.log(team);
+  try {
+    await team.save();
+    console.log(team);
+    res.send("Data saved Successfully");
+  } catch (err) {
+    res.status(500).send("Something went wrong!!" + err.message);
+  }
+});
+
+//Update data inside team Collection
+app.patch("/team", async (req, res) => {
+  const id = req.body.userId;
+  const trophy = req.body.trophy;
+  // console.log("UserId received:", id);
+  // console.log("UserId type:", typeof id);
+
+  try {
+    const updatedTeam = await Team.findByIdAndUpdate(
+      id,
+      { trophies: trophy },
+      {
+        new: true,
+      }
+    );
+    // const dd = await Team.findOneAndUpdate({ continent: continent }, data);
+    console.log(updatedTeam);
+    res.send("User Updated Successfully");
+  } catch (err) {
+    res.status(500).send("Something Went Wrong!!" + err.message);
+  }
+});
+
 connectDB()
   .then(() => {
     console.log("DB connectd Successfully");
-    app.listen(3000, () => {
-      console.log("Serer is live at port 3000");
+    app.listen(3001, () => {
+      console.log("Serer is live at port 3001");
     });
   })
   .catch((err) => {
